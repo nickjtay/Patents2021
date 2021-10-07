@@ -5,7 +5,6 @@ import sys
 from operator import itemgetter
 from sqlite3 import Error
 
-
 def create_connection(db_file):
     """ create a database connection to the SQLite database
         specified by db_file
@@ -18,9 +17,7 @@ def create_connection(db_file):
         return conn
     except Error as e:
         print(e)
-
     return conn
-
 
 def create_table(conn, create_table_sql):
     """ create a table from the create_table_sql statement
@@ -34,11 +31,7 @@ def create_table(conn, create_table_sql):
     except Error as e:
         print(e)
 
-
 def main():
-
-    # Increase CSV field size limit to maximim possible
-    # https://stackoverflow.com/a/15063941
     field_size_limit = sys.maxsize
     while True:
         try:
@@ -47,23 +40,18 @@ def main():
         except OverflowError:
             field_size_limit = int(field_size_limit / 10)
 
-
     database = r"D:\Patents\DB\patents.db"
-
     sql_create_brf_sum_text_table = """ CREATE TABLE IF NOT EXISTS brf_sum_text (
                                     uuid text PRIMARY KEY ASC,
                                     patent_id string,
                                     text BLOB
                                     ); """
-
-    # create a database connection
     conn = create_connection(database)
 
     # create tables
     if conn is not None:
         # create projects table
         create_table(conn, sql_create_brf_sum_text_table)
-
     else:
         print("Error! cannot create the database connection.")
 
@@ -72,7 +60,6 @@ def main():
     rootdir =  r"D:\Patents\Data\Extracted"
     for subdir, dirs, files in os.walk(rootdir):
         for file in files:
-            #print os.path.join(subdir, file)
             filepath = subdir + os.sep + file
             if filepath.endswith(".tsv"):
                 with conn, open(filepath, encoding="utf8") as f:
