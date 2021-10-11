@@ -1,5 +1,5 @@
 import csv
-from patent_import import create_connection
+from brf_sum_text_import import create_connection
 
 database = r"D:\Patents\DB\patents.db"
 conn = create_connection(database)

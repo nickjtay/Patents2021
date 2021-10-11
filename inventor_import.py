@@ -41,30 +41,24 @@ def main():
             field_size_limit = int(field_size_limit / 10)
 
     database = r"D:\Patents\DB\patents.db"
-    sql_create_patent_table = """ CREATE TABLE IF NOT EXISTS patent (
+    sql_create_inventor_table = """ CREATE TABLE IF NOT EXISTS inventor (
                                     id string PRIMARY KEY ASC,
-                                    type string,
-                                    number string,
-                                    country string,
-                                    date string,
-                                    abstract blob,
-                                    title blob,
-                                    kind string,
-                                    num_claims integer,
-                                    filename string,
-                                    withdrawn integer
+                                    name_first string,
+                                    name_last string,
+                                    male_flag integer,
+                                    attribution_status integer
                                     ); """
     conn = create_connection(database)
 
     if conn is not None:
         # create projects table
-        create_table(conn, sql_create_patent_table)
+        create_table(conn, sql_create_inventor_table)
     else:
         print("Error! cannot create the database connection.")
 
-    cols = ["id", "type", "number", "country", "date", "abstract", "title", "kind", "num_claims", "filename", "withdrawn"]
+    cols = ["id", "name_first", "name_last", "male_flag", "attribution_status"]
     chunksize = 10000
-    rootdir =  r"D:\Patents\Data\Extracted\patent"
+    rootdir =  r"D:\Patents\Data\Extracted\inventor"
     for subdir, dirs, files in os.walk(rootdir):
         for file in files:
             filepath = subdir + os.sep + file
@@ -76,8 +70,8 @@ def main():
                         if i % chunksize == 0 and i > 0:
                             conn.executemany(
                                 """
-                                INSERT INTO patent
-                                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                INSERT INTO inventor
+                                    VALUES(?, ?, ?, ?, ?)
                                 """, chunk
                             )
                             chunk = []

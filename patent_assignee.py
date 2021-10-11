@@ -40,31 +40,23 @@ def main():
         except OverflowError:
             field_size_limit = int(field_size_limit / 10)
 
-    database = r"D:\Patents\DB\patents.db"
-    sql_create_patent_table = """ CREATE TABLE IF NOT EXISTS patent (
-                                    id string PRIMARY KEY ASC,
-                                    type string,
-                                    number string,
-                                    country string,
-                                    date string,
-                                    abstract blob,
-                                    title blob,
-                                    kind string,
-                                    num_claims integer,
-                                    filename string,
-                                    withdrawn integer
+    database = r"D:\Patents\DB\patents - Copy.db"
+    sql_create_patent_assignee_table = """ CREATE TABLE IF NOT EXISTS patent_assignee (
+                                    patent_id string,
+                                    assignee_id string,
+                                    location_id string
                                     ); """
     conn = create_connection(database)
 
     if conn is not None:
         # create projects table
-        create_table(conn, sql_create_patent_table)
+        create_table(conn, sql_create_patent_assignee_table)
     else:
         print("Error! cannot create the database connection.")
 
-    cols = ["id", "type", "number", "country", "date", "abstract", "title", "kind", "num_claims", "filename", "withdrawn"]
+    cols = ["patent_id", "assignee_id", "location_id"]
     chunksize = 10000
-    rootdir =  r"D:\Patents\Data\Extracted\patent"
+    rootdir =  r"D:\Patents\Data\Extracted\patent_assignee"
     for subdir, dirs, files in os.walk(rootdir):
         for file in files:
             filepath = subdir + os.sep + file
@@ -76,8 +68,8 @@ def main():
                         if i % chunksize == 0 and i > 0:
                             conn.executemany(
                                 """
-                                INSERT INTO patent
-                                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                INSERT INTO patent_assignee
+                                    VALUES(?, ?, ?)
                                 """, chunk
                             )
                             chunk = []

@@ -5,7 +5,7 @@ from gensim.utils import simple_preprocess
 from gensim.parsing.preprocessing import STOPWORDS
 from nltk.stem import WordNetLemmatizer, SnowballStemmer
 from nltk.stem.porter import *
-from patent_import import create_connection, create_table
+from brf_sum_text_import import create_connection, create_table
 import numpy as np
 np.random.seed(2018)
 import nltk
@@ -104,4 +104,7 @@ with open(filename, 'r') as csvfile:
         patent = select_one_brf_sum_text(conn, (row[0],))
         patent=patent[0][0].replace('\n',' ')
         patent = preprocess(patent)
-        insert_lemma_text(conn, [row[0],str(patent)])
+        try:
+            insert_lemma_text(conn, [row[0],str(patent)])
+        except Exception:
+            pass
